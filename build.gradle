@@ -1,0 +1,57 @@
+plugins {
+    id 'org.springframework.boot' version '2.4.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.spy686'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+tasks.withType(JavaCompile){
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
+    // For resolve https://repo.maven.apache.org/maven2/javax/jms/jms/1.1/jms-1.1.jar issue
+    maven {
+        url "https://repo.maven.apache.org/maven2/"
+        artifactUrls "https://repository.jboss.org/maven2/"
+    }
+    mavenCentral()
+}
+
+dependencies {
+    /**
+     * Spring Boot Starter
+     *
+     * Spring Boot Starter Web: Starter for building web, including RESTful, applications using Spring MVC.
+     *      Uses Tomcat as the default embedded container
+     * Spring Boot Starter Test: Starter for testing Spring Boot applications with libraries including JUnit Jupiter,
+     *      Hamcrest and Mockito
+     *
+     * https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
+     */
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    /**
+     * Lombok
+     *
+     * Spice up your java: Automatic Resource Management, automatic generation
+     * of getters, setters, equals, hashCode and toString, and more!
+     *
+     * https://mvnrepository.com/artifact/org.projectlombok/lombok
+     */
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+}
+
+test {
+	useJUnitPlatform()
+}
