@@ -12,7 +12,7 @@ public class RealtByController {
 
     private RentRequestService rentRequestForRealtBy;
 
-    @GetMapping
+    @GetMapping("get")
     public String getRent(){
         return rentRequestForRealtBy.getFlats();
     }
