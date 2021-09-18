@@ -50,6 +50,30 @@ dependencies {
      */
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    /**
+     * REST Assured
+     * Java DSL for easy testing of REST services
+     *
+     * https://mvnrepository.com/artifact/io.rest-assured/rest-assured
+     * https://mvnrepository.com/artifact/io.rest-assured/json-path
+     * https://mvnrepository.com/artifact/io.rest-assured/json-schema-validator
+     */
+    implementation 'io.rest-assured:rest-assured:4.3.3'
+    implementation 'io.rest-assured:json-path:4.3.3'
+    implementation 'io.rest-assured:json-schema-validator:4.3.3'
+    /**
+     * JUnit5
+     * JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.
+     * Module "junit-jupiter-api" of JUnit 5.
+     * Module "junit-jupiter-engine" of JUnit 5.
+     *
+     * https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+     * https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+     */
+    implementation 'org.junit.jupiter:junit-jupiter-engine:5.4.0'
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.4.0'
 }
 
 test {
