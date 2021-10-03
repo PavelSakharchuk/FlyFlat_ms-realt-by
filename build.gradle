@@ -28,6 +28,9 @@ repositories {
     mavenCentral()
 }
 
+// For resolve issue: https://stackoverflow.com/questions/61020200/getting-java-lang-abstractmethoderror-when-i-test-using-rest-assured
+ext["groovy.version"] = "3.0.3"
+
 dependencies {
     /**
      * Spring Boot Starter
@@ -68,6 +71,16 @@ dependencies {
     testCompileOnly  'io.rest-assured:json-path:4.3.3'
     testCompileOnly  'io.rest-assured:json-schema-validator:4.3.3'
     testCompileOnly 'io.rest-assured:rest-assured-all:4.3.3'
+    /**
+     * JSoup Java HTML Parser
+     * jsoup is a Java library for working with real-world HTML.
+     * It provides a very convenient API for extracting and manipulating
+     * data, using the best of DOM, CSS, and jquery-like methods.
+     * jsoup implements the WHATWG HTML5 specification, and parses HTML to the same DOM as modern browsers do.
+     *
+     * https://mvnrepository.com/artifact/org.jsoup/jsoup
+     */
+    implementation 'org.jsoup:jsoup:1.13.1'
     /**
      * JUnit5
      * JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.
