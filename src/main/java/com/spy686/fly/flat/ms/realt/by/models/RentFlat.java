@@ -3,10 +3,13 @@ package com.spy686.fly.flat.ms.realt.by.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,9 +17,13 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-@NoArgsConstructor
+@Document(collection = "rent_flat")
 public class RentFlat implements Serializable {
-    private long id;
+    @Id
+    private String id;
+    @Field(value = "source")
+    private Source source = Source.REALT_BY;
+    private long objectId;
     private boolean highlighted;
     private String link;
     private String imageLink;
@@ -31,6 +38,8 @@ public class RentFlat implements Serializable {
     private String details;
     private String sellerName;
     private List<String> sellerPhones = new ArrayList<>();
+    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime lastUpdate = LocalDateTime.now();
 
 
     @Getter

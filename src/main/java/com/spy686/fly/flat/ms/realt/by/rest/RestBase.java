@@ -1,4 +1,4 @@
-package com.spy686.fly.flat.ms.realt.by.rest.services;
+package com.spy686.fly.flat.ms.realt.by.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spy686.fly.flat.ms.realt.by.constants.Endpoint;
@@ -15,14 +15,14 @@ import static io.restassured.RestAssured.given;
 
 
 @Slf4j
-public abstract class BaseRestService {
+public abstract class RestBase {
     private static final String LANGUAGE_KEY = "language";
     private static final String LANGUAGE_VALUE = "ru-RU";
 
 
     protected RequestSpecification requestSpecification;
 
-    protected BaseRestService() {
+    protected RestBase() {
         getSpecification();
     }
 

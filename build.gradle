@@ -44,17 +44,13 @@ dependencies {
      */
     implementation 'org.springframework.boot:spring-boot-starter-web'
     /**
-     * Lombok
+     * Spring Boot Starter Data MongoDB
      *
-     * Spice up your java: Automatic Resource Management, automatic generation
-     * of getters, setters, equals, hashCode and toString, and more!
+     * Starter for using MongoDB document-oriented database and Spring Data MongoDB
      *
-     * https://mvnrepository.com/artifact/org.projectlombok/lombok
+     * https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-mongodb
      */
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
+    compile 'org.springframework.boot:spring-boot-starter-data-mongodb:2.5.2'
     /**
      * REST Assured
      * Java DSL for easy testing of REST services
@@ -81,6 +77,26 @@ dependencies {
      * https://mvnrepository.com/artifact/org.jsoup/jsoup
      */
     implementation 'org.jsoup:jsoup:1.13.1'
+    /**
+     * Lombok
+     *
+     * Spice up your java: Automatic Resource Management, automatic generation
+     * of getters, setters, equals, hashCode and toString, and more!
+     *
+     * https://mvnrepository.com/artifact/org.projectlombok/lombok
+     */
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    /**
+     * Awaitility
+     *
+     * A Java DSL for synchronizing asynchronous operations
+     *
+     * https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+     */
+    implementation 'org.awaitility:awaitility:4.0.3'
     /**
      * JUnit5
      * JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.

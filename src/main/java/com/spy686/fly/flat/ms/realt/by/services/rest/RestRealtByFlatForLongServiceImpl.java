@@ -1,10 +1,12 @@
-package com.spy686.fly.flat.ms.realt.by.rest.services;
+package com.spy686.fly.flat.ms.realt.by.services.rest;
 
 import com.spy686.fly.flat.ms.realt.by.constants.Constants;
 import com.spy686.fly.flat.ms.realt.by.constants.Endpoint;
 import com.spy686.fly.flat.ms.realt.by.models.RentFlat;
+import com.spy686.fly.flat.ms.realt.by.models.Source;
+import com.spy686.fly.flat.ms.realt.by.rest.RestBase;
+import com.spy686.fly.flat.ms.realt.by.rest.requests.RealtByFlatForLongRedirectRequestBody;
 import com.spy686.fly.flat.ms.realt.by.rest.requests.RealtByFlatForLongRequestBody;
-import com.spy686.fly.flat.ms.realt.by.rest.requests.RealtByFlatForLongRequestRedirectBody;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import lombok.SneakyThrows;
@@ -13,17 +15,22 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 
+@Service
 @Slf4j
-public class RestRealtByFlatForLongService extends BaseRestService {
+public class RestRealtByFlatForLongServiceImpl extends RestBase implements RentFlatService {
 
     private static final String ITEMS_CSS_QUERY = "div[class*='listing-item'][data-mode]";
     private static final String ITEM_HIGHLIGHTED_CSS_QUERY = "div[class*='highlight-icon']";
@@ -51,22 +58,27 @@ public class RestRealtByFlatForLongService extends BaseRestService {
     private static final String PAGING_LIST_CSS_QUERY = "div[class*=paging-list] > a";
 
 
-    public RestRealtByFlatForLongService() {
+    public RestRealtByFlatForLongServiceImpl() {
         super();
     }
 
     public List<RentFlat> getRentFlatList() {
+        log.info("Get Rent Flat List: " + Source.REALT_BY);
+
         RealtByFlatForLongRequestBody realtByFlatForLongRequestBody = new RealtByFlatForLongRequestBody().generateRequestBody();
         realtByFlatForLongRequestBody.setTownName("Минск");
+        realtByFlatForLongRequestBody.setDaysOld(1);
+        realtByFlatForLongRequestBody.setSortBy("date_revision");
+        realtByFlatForLongRequestBody.setAscDesc("1");
 
-        RealtByFlatForLongRequestRedirectBody realtByFlatForLongRequestRedirectBody =
+        RealtByFlatForLongRedirectRequestBody realtByFlatForLongRedirectRequestBody =
                 getRealtByRentFlatRequestRedirect(realtByFlatForLongRequestBody);
 
-        return getRentFlatList(realtByFlatForLongRequestRedirectBody);
+        return getRentFlatList(realtByFlatForLongRedirectRequestBody);
     }
 
     @SneakyThrows
-    public RealtByFlatForLongRequestRedirectBody getRealtByRentFlatRequestRedirect(
+    private RealtByFlatForLongRedirectRequestBody getRealtByRentFlatRequestRedirect(
             RealtByFlatForLongRequestBody realtByFlatForLongRequestBody) {
         log.info("Get Request after redirect.");
         Response firstResponseWithRedirect = get(realtByFlatForLongRequestBody, Endpoint.RENT_FLAT_FOR_LONG, false);
@@ -75,43 +87,45 @@ public class RestRealtByFlatForLongService extends BaseRestService {
         String urlString = responseWithLocation.getHeader("Location");
         String searchParam = UriComponentsBuilder.fromUriString(urlString).build().getQueryParams().getFirst("search");
 
-        RealtByFlatForLongRequestRedirectBody realtByFlatForLongRequestRedirectBody =
-                new RealtByFlatForLongRequestRedirectBody().generateRequestBody();
-        realtByFlatForLongRequestRedirectBody.setSearch(URLDecoder.decode(searchParam, "UTF-8"));
+        RealtByFlatForLongRedirectRequestBody realtByFlatForLongRedirectRequestBody =
+                new RealtByFlatForLongRedirectRequestBody().generateRequestBody();
+        realtByFlatForLongRedirectRequestBody.setSearch(URLDecoder.decode(searchParam, "UTF-8"));
 
-        return realtByFlatForLongRequestRedirectBody;
+        return realtByFlatForLongRedirectRequestBody;
     }
 
     @SneakyThrows
-    public List<RentFlat> getRentFlatList(RealtByFlatForLongRequestRedirectBody realtByFlatForLongRequestBody) {
+    private List<RentFlat> getRentFlatList(RealtByFlatForLongRedirectRequestBody realtByFlatForLongRequestBody) {
         log.info("Get Rent Flats.");
-        List<RentFlat> rentFlatFullList = new ArrayList<>();
+        Map<Integer, Document> htmlDocMap = new HashMap<>();
 
         int currentPage = realtByFlatForLongRequestBody.getPage();
-        Document htmlDoc;
+        Document currentHtmlDoc;
         do {
             realtByFlatForLongRequestBody.setPage(currentPage++);
-            log.debug("In progress: {}", realtByFlatForLongRequestBody);
             Response response = get(realtByFlatForLongRequestBody, Endpoint.RENT_FLAT_FOR_LONG);
-            String body = response.asString();
-            htmlDoc = Jsoup.parse(body);
-            List<RentFlat> rentFlatList = getRentFlatList(htmlDoc);
-            rentFlatFullList.addAll(rentFlatList);
-        } while (!isLastPage(htmlDoc));
 
-        return rentFlatFullList;
+            String body = response.asString();
+            currentHtmlDoc = Jsoup.parse(body);
+
+            htmlDocMap.put(currentPage, currentHtmlDoc);
+        } while (!isLastPage(currentHtmlDoc));
+
+        return htmlDocMap.entrySet().parallelStream()
+                .map(htmlDocSet -> getRentFlatList(htmlDocSet.getKey(), htmlDocSet.getValue()))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
-    private List<RentFlat> getRentFlatList(Document htmlDoc) {
+    private List<RentFlat> getRentFlatList(Integer page, Document htmlDoc) {
         List<RentFlat> rentFlatList = new ArrayList<>();
         Elements items = htmlDoc.select(ITEMS_CSS_QUERY);
 
         AtomicInteger i = new AtomicInteger(1);
         int itemsSize = items.size();
-        items.stream()
+        items.parallelStream()
                 .forEach(htmlNode -> {
-                    log.debug("In progress: {}/{}", i.getAndIncrement(), itemsSize);
-//                    log.debug(htmlNode.html());
+                    log.info("In progress: page {} - {}/{}", page, i.getAndIncrement(), itemsSize);
 
                     Element leftSection = htmlNode.selectFirst(ITEM_LEFT_SECTION_CSS_QUERY);
                     Element rightSection = htmlNode.selectFirst(ITEM_RIGHT_SECTION_CSS_QUERY);
@@ -149,7 +163,7 @@ public class RestRealtByFlatForLongService extends BaseRestService {
                     String sellerPhone = contactSection.selectFirst(ITEM_CONTACT_SELLER_PHONE_CSS_QUERY).text();
 
                     RentFlat rentFlat = new RentFlat();
-                    rentFlat.setId(id);
+                    rentFlat.setObjectId(id);
                     rentFlat.setHighlighted(highlighted);
                     rentFlat.setLink(link);
                     rentFlat.setImageLink(imageLink);
@@ -172,6 +186,7 @@ public class RestRealtByFlatForLongService extends BaseRestService {
     }
 
     private boolean isLastPage(Document htmlDoc) {
-        return htmlDoc.select(PAGING_LIST_CSS_QUERY).last().hasClass("active");
+        Element lastPageSection = htmlDoc.select(PAGING_LIST_CSS_QUERY).last();
+        return lastPageSection == null || lastPageSection.hasClass("active");
     }
 }
