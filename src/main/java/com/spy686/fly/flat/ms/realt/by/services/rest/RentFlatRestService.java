@@ -5,7 +5,7 @@ import com.spy686.fly.flat.ms.realt.by.models.RentFlat;
 import java.util.List;
 
 
-public interface RentFlatService {
+public interface RentFlatRestService {
 
     List<RentFlat> getRentFlatList();
 }

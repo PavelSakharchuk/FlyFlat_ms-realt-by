@@ -1,4 +1,4 @@
-package com.spy686.fly.flat.ms.realt.by.services.data;
+package com.spy686.fly.flat.ms.realt.by.services.database;
 
 import com.spy686.fly.flat.ms.realt.by.models.RentFlat;
 import com.spy686.fly.flat.ms.realt.by.models.Source;
@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 @Slf4j
 @AllArgsConstructor
-public class RentFlatDataService {
+public class RentFlatDatabaseService {
 
     private final RentFlatRepository accountRepository;
 
