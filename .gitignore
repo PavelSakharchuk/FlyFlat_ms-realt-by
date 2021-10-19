@@ -1,3 +1,6 @@
+# Config file with credentials data of MS
+**/application.properties
+
 # Build
 HELP.md
 .gradle

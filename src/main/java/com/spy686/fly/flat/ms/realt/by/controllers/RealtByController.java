@@ -25,7 +25,7 @@ public class RealtByController {
     @GetMapping(value = "/realt-by/fetch")
     public void fetchRealtBy() {
         if (controllerLocker) {
-            log.info("Before process doesn't completed.");
+            log.info("Previous process doesn't completed.");
             throw new OrderNotFoundException();
         }
         Executors.newSingleThreadExecutor().submit(() -> {

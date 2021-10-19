@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class RestRealtByFlatForLongServiceImpl extends RestBase implements RentFlatService {
+public class RestRealtByFlatForLongRestServiceImpl extends RestBase implements RentFlatRestService {
 
     private static final String ITEMS_CSS_QUERY = "div[class*='listing-item'][data-mode]";
     private static final String ITEM_HIGHLIGHTED_CSS_QUERY = "div[class*='highlight-icon']";
@@ -58,7 +58,7 @@ public class RestRealtByFlatForLongServiceImpl extends RestBase implements RentF
     private static final String PAGING_LIST_CSS_QUERY = "div[class*=paging-list] > a";
 
 
-    public RestRealtByFlatForLongServiceImpl() {
+    public RestRealtByFlatForLongRestServiceImpl() {
         super();
     }
 
