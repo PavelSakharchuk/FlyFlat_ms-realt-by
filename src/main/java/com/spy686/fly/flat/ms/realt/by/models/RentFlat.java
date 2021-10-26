@@ -40,6 +40,7 @@ public class RentFlat implements Serializable {
     private List<String> sellerPhones = new ArrayList<>();
     private LocalDateTime createDate = LocalDateTime.now();
     private LocalDateTime lastUpdate = LocalDateTime.now();
+    private boolean isActual = true;
 
 
     @Getter

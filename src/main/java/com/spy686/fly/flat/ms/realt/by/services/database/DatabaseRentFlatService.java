@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 @Slf4j
 @AllArgsConstructor
-public class RentFlatDatabaseService {
+public class DatabaseRentFlatService {
 
     private final RentFlatRepository accountRepository;
 

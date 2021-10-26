@@ -35,6 +35,10 @@ public abstract class RestBase {
         return get(obj, endpoint.getUrl(), true);
     }
 
+    public Response get(Object obj, Endpoint endpoint, Map pathParams) {
+        return get(obj, endpoint.getUrl(), pathParams);
+    }
+
     public Response get(Object obj, URL url, boolean redirect) {
         return get(obj, url.toString(), redirect);
     }
@@ -51,6 +55,17 @@ public abstract class RestBase {
         rs = (obj != null) ? rs.queryParams(objMap) : rs;
         rs.contentType("charset=utf-8");
         Response response = rs.redirects().follow(redirect).get(urlString);
+        response.then().log().status();
+        return response;
+    }
+
+    private Response get(Object obj, String urlString, Map<String, String> pathParams) {
+        Map<String, Object> objMap = new ObjectMapper().convertValue(obj, Map.class);
+
+        RequestSpecification rs = given(requestSpecification);
+        rs = (obj != null) ? rs.queryParams(objMap) : rs;
+        rs.contentType("charset=utf-8");
+        Response response = rs.pathParams(pathParams).get(urlString);
         response.then().log().status();
         return response;
     }

@@ -20,20 +20,30 @@ import java.util.concurrent.Executors;
 public class RealtByController {
 
     private RealtByService realtByService;
+    // TODO: 24.10.2021: p.sakharchuj: Need to apply with pool
     private static boolean controllerLocker = false;
 
     @GetMapping(value = "/realt-by/fetch")
     public void fetchRealtBy() {
+        run("/realt-by/fetch", () -> realtByService.fetch());
+    }
+
+    @GetMapping(value = "/realt-by/delete-not-actual")
+    public void deleteNotActualRealtBy() {
+        run("/realt-by/delete-not-actual", () -> realtByService.deleteNotActualRealtBy());
+    }
+
+    private void run(String request, Runnable runnable) {
         if (controllerLocker) {
             log.info("Previous process doesn't completed.");
             throw new OrderNotFoundException();
         }
         Executors.newSingleThreadExecutor().submit(() -> {
-            log.info("START: /realt-by/fetch");
+            log.info("START: {}", request);
             controllerLocker = true;
-            realtByService.fetchRealtBy();
+            runnable.run();
             controllerLocker = false;
-            log.info("END: /realt-by/fetch");
+            log.info("END: {}", request);
         });
     }
 
