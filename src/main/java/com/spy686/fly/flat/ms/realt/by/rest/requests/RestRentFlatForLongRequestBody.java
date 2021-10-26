@@ -6,10 +6,19 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 
+/**
+ * Request body: GET rent/flat-for-long/
+ * <p> Example: https://realt.by/rent/flat-for-long/
+ * <p> ?tx_uedbflatrent_pi2%5BDATA%5D%5Btown_name%5D%5Blike%5D%5B%5D=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA
+ * <p> &tx_uedbflatrent_pi2%5BDATA%5D%5Bx_days_old%5D%5Be%5D=1
+ * <p> &tx_uedbflatrent_pi2%5Bsort_by%5D%5B0%5D=date_revision
+ * <p> &tx_uedbflatrent_pi2%5Basc_desc%5D%5B0%5D=1
+ * <p> &tx_uedbflatrent_pi2%5Brec_per_page%5D=100
+ */
 @Data
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RealtByFlatForLongRequestBody {
+public class RestRentFlatForLongRequestBody {
 
     /**
      * town_name
@@ -46,7 +55,7 @@ public class RealtByFlatForLongRequestBody {
     private final Integer recPerPage = 100;
 
 
-    public RealtByFlatForLongRequestBody generateRequestBody() {
-        return new RealtByFlatForLongRequestBody();
+    public RestRentFlatForLongRequestBody generateRequestBody() {
+        return new RestRentFlatForLongRequestBody();
     }
 }

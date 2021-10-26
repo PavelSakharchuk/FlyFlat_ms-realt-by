@@ -1,6 +1,6 @@
 package com.spy686.fly.flat.ms.realt.by;
 
-import com.spy686.fly.flat.ms.realt.by.services.RealtByService;
+import com.spy686.fly.flat.ms.realt.by.services.RealtByFetchService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -12,13 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TasksTests extends BaseTest {
 
     @Autowired
-    private RealtByService realtByService;
+    private RealtByFetchService realtByFetchService;
 
     @Test
     void fetchRealtByTest() {
-        log.info("fetchRealtByTest");
-
-        List<RentFlat> rentFlatFullList = restRealtByFlatForLongService.getRentFlatList();
+        realtByFetchService.fetch();
     }
 
 }

@@ -5,8 +5,8 @@ import com.spy686.fly.flat.ms.realt.by.constants.Endpoint;
 import com.spy686.fly.flat.ms.realt.by.models.RentFlat;
 import com.spy686.fly.flat.ms.realt.by.models.Source;
 import com.spy686.fly.flat.ms.realt.by.rest.RestBase;
-import com.spy686.fly.flat.ms.realt.by.rest.requests.RealtByFlatForLongRedirectRequestBody;
-import com.spy686.fly.flat.ms.realt.by.rest.requests.RealtByFlatForLongRequestBody;
+import com.spy686.fly.flat.ms.realt.by.rest.requests.RestRentFlatForLongRedirectRequestBody;
+import com.spy686.fly.flat.ms.realt.by.rest.requests.RestRentFlatForLongRequestBody;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import lombok.SneakyThrows;
@@ -28,9 +28,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 
+/**
+ * Service for REST: GET rent/flat-for-long/
+ * <p> Example: https://realt.by/rent/flat-for-long/
+ * <p> ?tx_uedbflatrent_pi2%5BDATA%5D%5Btown_name%5D%5Blike%5D%5B%5D=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA
+ * <p> &tx_uedbflatrent_pi2%5BDATA%5D%5Bx_days_old%5D%5Be%5D=1
+ * <p> &tx_uedbflatrent_pi2%5Bsort_by%5D%5B0%5D=date_revision
+ * <p> &tx_uedbflatrent_pi2%5Basc_desc%5D%5B0%5D=1
+ * <p> &tx_uedbflatrent_pi2%5Brec_per_page%5D=100
+ */
 @Service
 @Slf4j
-public class RestRealtByFlatForLongRestServiceImpl extends RestBase implements RentFlatRestService {
+public class RestRentFlatForLongService extends RestBase {
 
     private static final String ITEMS_CSS_QUERY = "div[class*='listing-item'][data-mode]";
     private static final String ITEM_HIGHLIGHTED_CSS_QUERY = "div[class*='highlight-icon']";
@@ -58,44 +67,44 @@ public class RestRealtByFlatForLongRestServiceImpl extends RestBase implements R
     private static final String PAGING_LIST_CSS_QUERY = "div[class*=paging-list] > a";
 
 
-    public RestRealtByFlatForLongRestServiceImpl() {
+    public RestRentFlatForLongService() {
         super();
     }
 
     public List<RentFlat> getRentFlatList() {
         log.info("Get Rent Flat List: " + Source.REALT_BY);
 
-        RealtByFlatForLongRequestBody realtByFlatForLongRequestBody = new RealtByFlatForLongRequestBody().generateRequestBody();
-        realtByFlatForLongRequestBody.setTownName("Минск");
-        realtByFlatForLongRequestBody.setDaysOld(1);
-        realtByFlatForLongRequestBody.setSortBy("date_revision");
-        realtByFlatForLongRequestBody.setAscDesc("1");
+        RestRentFlatForLongRequestBody restRentFlatForLongRequestBody = new RestRentFlatForLongRequestBody().generateRequestBody();
+        restRentFlatForLongRequestBody.setTownName("Минск");
+        restRentFlatForLongRequestBody.setDaysOld(1);
+        restRentFlatForLongRequestBody.setSortBy("date_revision");
+        restRentFlatForLongRequestBody.setAscDesc("1");
 
-        RealtByFlatForLongRedirectRequestBody realtByFlatForLongRedirectRequestBody =
-                getRealtByRentFlatRequestRedirect(realtByFlatForLongRequestBody);
+        RestRentFlatForLongRedirectRequestBody restRentFlatForLongRedirectRequestBody =
+                getRealtByRentFlatRequestRedirect(restRentFlatForLongRequestBody);
 
-        return getRentFlatList(realtByFlatForLongRedirectRequestBody);
+        return getRentFlatList(restRentFlatForLongRedirectRequestBody);
     }
 
     @SneakyThrows
-    private RealtByFlatForLongRedirectRequestBody getRealtByRentFlatRequestRedirect(
-            RealtByFlatForLongRequestBody realtByFlatForLongRequestBody) {
+    private RestRentFlatForLongRedirectRequestBody getRealtByRentFlatRequestRedirect(
+            RestRentFlatForLongRequestBody restRentFlatForLongRequestBody) {
         log.info("Get Request after redirect.");
-        Response firstResponseWithRedirect = get(realtByFlatForLongRequestBody, Endpoint.RENT_FLAT_FOR_LONG, false);
+        Response firstResponseWithRedirect = get(restRentFlatForLongRequestBody, Endpoint.RENT_FLAT_FOR_LONG, false);
         String firstUrlWithRedirect = firstResponseWithRedirect.getHeader("Location");
-        Response responseWithLocation = get(realtByFlatForLongRequestBody, new URL(firstUrlWithRedirect), false);
+        Response responseWithLocation = get(restRentFlatForLongRequestBody, new URL(firstUrlWithRedirect), false);
         String urlString = responseWithLocation.getHeader("Location");
         String searchParam = UriComponentsBuilder.fromUriString(urlString).build().getQueryParams().getFirst("search");
 
-        RealtByFlatForLongRedirectRequestBody realtByFlatForLongRedirectRequestBody =
-                new RealtByFlatForLongRedirectRequestBody().generateRequestBody();
-        realtByFlatForLongRedirectRequestBody.setSearch(URLDecoder.decode(searchParam, "UTF-8"));
+        RestRentFlatForLongRedirectRequestBody restRentFlatForLongRedirectRequestBody =
+                new RestRentFlatForLongRedirectRequestBody().generateRequestBody();
+        restRentFlatForLongRedirectRequestBody.setSearch(URLDecoder.decode(searchParam, "UTF-8"));
 
-        return realtByFlatForLongRedirectRequestBody;
+        return restRentFlatForLongRedirectRequestBody;
     }
 
     @SneakyThrows
-    private List<RentFlat> getRentFlatList(RealtByFlatForLongRedirectRequestBody realtByFlatForLongRequestBody) {
+    private List<RentFlat> getRentFlatList(RestRentFlatForLongRedirectRequestBody realtByFlatForLongRequestBody) {
         log.info("Get Rent Flats.");
         Map<Integer, Document> htmlDocMap = new HashMap<>();
 
