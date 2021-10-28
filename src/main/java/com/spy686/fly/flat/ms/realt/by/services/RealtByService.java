@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 
 @Service
 @Slf4j
@@ -14,7 +16,11 @@ public class RealtByService {
     private RealtByDeleteNotActualService realtByDeleteNotActualService;
 
     public void fetch() {
-        realtByFetchService.fetch();
+        try {
+            realtByFetchService.fetch();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteNotActualRealtBy() {

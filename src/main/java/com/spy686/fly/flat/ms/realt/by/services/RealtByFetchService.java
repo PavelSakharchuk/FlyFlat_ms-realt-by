@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class RealtByFetchService {
     private RestRentFlatForLongService restRentFlatForLongService;
     private DatabaseRentFlatService databaseRentFlatService;
 
-    public void fetch() {
+    public void fetch() throws IOException {
         List<RentFlat> savedRentFlatList = databaseRentFlatService.getAll();
         Map<Long, RentFlat> savedRentFlatMap = savedRentFlatList.stream()
                 .distinct()
