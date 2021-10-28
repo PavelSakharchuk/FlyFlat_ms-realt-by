@@ -9,7 +9,6 @@ import com.spy686.fly.flat.ms.realt.by.rest.requests.RestRentFlatForLongRedirect
 import com.spy686.fly.flat.ms.realt.by.rest.requests.RestRentFlatForLongRequestBody;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +17,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class RestRentFlatForLongService extends RestBase {
         super();
     }
 
-    public List<RentFlat> getRentFlatList() {
+    public List<RentFlat> getRentFlatList() throws IOException {
         log.info("Get Rent Flat List: " + Source.REALT_BY);
 
         RestRentFlatForLongRequestBody restRentFlatForLongRequestBody = new RestRentFlatForLongRequestBody().generateRequestBody();
@@ -86,9 +86,8 @@ public class RestRentFlatForLongService extends RestBase {
         return getRentFlatList(restRentFlatForLongRedirectRequestBody);
     }
 
-    @SneakyThrows
     private RestRentFlatForLongRedirectRequestBody getRealtByRentFlatRequestRedirect(
-            RestRentFlatForLongRequestBody restRentFlatForLongRequestBody) {
+            RestRentFlatForLongRequestBody restRentFlatForLongRequestBody) throws IOException {
         log.info("Get Request after redirect.");
         Response firstResponseWithRedirect = get(restRentFlatForLongRequestBody, Endpoint.RENT_FLAT_FOR_LONG, false);
         String firstUrlWithRedirect = firstResponseWithRedirect.getHeader("Location");
@@ -103,7 +102,6 @@ public class RestRentFlatForLongService extends RestBase {
         return restRentFlatForLongRedirectRequestBody;
     }
 
-    @SneakyThrows
     private List<RentFlat> getRentFlatList(RestRentFlatForLongRedirectRequestBody realtByFlatForLongRequestBody) {
         log.info("Get Rent Flats.");
         Map<Integer, Document> htmlDocMap = new HashMap<>();

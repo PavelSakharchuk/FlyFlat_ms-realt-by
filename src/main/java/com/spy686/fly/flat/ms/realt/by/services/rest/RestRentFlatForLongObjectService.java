@@ -5,7 +5,6 @@ import com.spy686.fly.flat.ms.realt.by.models.RentFlat;
 import com.spy686.fly.flat.ms.realt.by.rest.RestBase;
 import com.spy686.fly.flat.ms.realt.by.rest.requests.RestRentFlatForLongObjectRequestBody;
 import io.restassured.response.Response;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -39,7 +38,6 @@ public class RestRentFlatForLongObjectService extends RestBase {
         return fetchRentFlatData(restRentFlatForLongObjectRequestBody, rentFlat);
     }
 
-    @SneakyThrows
     private RentFlat fetchRentFlatData(RestRentFlatForLongObjectRequestBody restRentFlatForLongObjectRequestBody,
                                        RentFlat rentFlat) {
         Map<String, String> pathParams = Endpoint.RENT_FLAT_FOR_LONG_OBJECT_ID.getPathParams();
