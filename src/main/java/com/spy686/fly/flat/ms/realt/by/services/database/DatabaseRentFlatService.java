@@ -15,21 +15,21 @@ import java.util.List;
 @AllArgsConstructor
 public class DatabaseRentFlatService {
 
-    private final RentFlatRepository accountRepository;
+    private final RentFlatRepository rentFlatRepository;
 
 
     public void deleteAll(List<RentFlat> rentFlats) {
         log.info("Delete: " + rentFlats.size());
-        accountRepository.deleteAll(rentFlats);
+        rentFlatRepository.deleteAll(rentFlats);
     }
 
     public void saveAll(List<RentFlat> rentFlats) {
         log.info("Save: " + rentFlats.size());
-        accountRepository.saveAll(rentFlats);
+        rentFlatRepository.saveAll(rentFlats);
     }
 
     public List<RentFlat> getAll() {
         log.info("Get All: " + Source.REALT_BY);
-        return accountRepository.findAllBySource(Source.REALT_BY);
+        return rentFlatRepository.findAllBySource(Source.REALT_BY);
     }
 }

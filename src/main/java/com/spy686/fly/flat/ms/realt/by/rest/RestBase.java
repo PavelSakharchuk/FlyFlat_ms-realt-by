@@ -47,6 +47,10 @@ public abstract class RestBase {
         return get(obj, url.toString(), true);
     }
 
+    public Response get(Object obj, String urlString) {
+        return get(obj, urlString, true);
+    }
+
     // TODO: 10.02.2021: p.sakharchuk: Time to time we get 'HTTP/1.1 429 Too Many Requests' Error in the Response. Need to re-send request.
     private Response get(Object obj, String urlString, boolean redirect) {
         Map<String, Object> objMap = new ObjectMapper().convertValue(obj, Map.class);

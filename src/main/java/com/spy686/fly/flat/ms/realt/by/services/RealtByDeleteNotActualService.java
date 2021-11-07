@@ -28,15 +28,12 @@ public class RealtByDeleteNotActualService {
         savedRentFlatList.parallelStream()
                 .forEach(rentFlat -> {
                     log.info("Fetch {}/{}: {} [{}]", number.getAndIncrement(), rentFlatListSize, rentFlat.getObjectId(), rentFlat.getSource());
-                    restRentFlatForLongObjectService.fetchRentFlatData(rentFlat);
+                    restRentFlatForLongObjectService.fetchRentFlatIsActual(rentFlat);
                 });
 
         List<RentFlat> notActualRentFlatList = savedRentFlatList.parallelStream()
                 .filter(rentFlat -> !rentFlat.isActual()).collect(Collectors.toList());
-        List<RentFlat> actualRentFlatList = savedRentFlatList.parallelStream()
-                .filter(RentFlat::isActual).collect(Collectors.toList());
 
         databaseRentFlatService.deleteAll(notActualRentFlatList);
-        databaseRentFlatService.saveAll(actualRentFlatList);
     }
 }
