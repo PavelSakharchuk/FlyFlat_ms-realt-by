@@ -17,13 +17,17 @@ public class RealtByService {
 
     public void fetch() {
         try {
+            log.info("START: {}", "fetch");
             realtByFetchService.fetch();
+            log.info("END: {}", "fetch");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void deleteNotActualRealtBy() {
+        log.info("START: {}", "deleteNotActualRealtBy");
         realtByDeleteNotActualService.deleteNotActualRealtBy();
+        log.info("END: {}", "deleteNotActualRealtBy");
     }
 }

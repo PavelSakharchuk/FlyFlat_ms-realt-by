@@ -40,6 +40,7 @@ public class RentFlat implements Serializable {
     private List<String> sellerPhones = new ArrayList<>();
     private LocalDateTime createDate = LocalDateTime.now();
     private LocalDateTime lastUpdate = LocalDateTime.now();
+    private Boolean isAgent;
     private boolean isActual = true;
 
 
@@ -68,5 +69,10 @@ public class RentFlat implements Serializable {
 //                    .orElse(ROOM_COUNT_NA);
                     .orElseThrow(() -> new RuntimeException(roomCountString));
         }
+    }
+
+
+    public enum Source {
+        REALT_BY
     }
 }
