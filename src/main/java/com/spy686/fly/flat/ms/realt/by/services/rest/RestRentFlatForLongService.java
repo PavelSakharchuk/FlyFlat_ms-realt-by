@@ -3,7 +3,6 @@ package com.spy686.fly.flat.ms.realt.by.services.rest;
 import com.spy686.fly.flat.ms.realt.by.constants.Constants;
 import com.spy686.fly.flat.ms.realt.by.constants.Endpoint;
 import com.spy686.fly.flat.ms.realt.by.models.RentFlat;
-import com.spy686.fly.flat.ms.realt.by.models.Source;
 import com.spy686.fly.flat.ms.realt.by.rest.RestBase;
 import com.spy686.fly.flat.ms.realt.by.rest.requests.RestRentFlatForLongRedirectRequestBody;
 import com.spy686.fly.flat.ms.realt.by.rest.requests.RestRentFlatForLongRequestBody;
@@ -72,7 +71,7 @@ public class RestRentFlatForLongService extends RestBase {
     }
 
     public List<RentFlat> getRentFlatList() throws IOException {
-        log.info("Get Rent Flat List: " + Source.REALT_BY);
+        log.info("Get Rent Flat List: " + RentFlat.Source.REALT_BY);
 
         RestRentFlatForLongRequestBody restRentFlatForLongRequestBody = new RestRentFlatForLongRequestBody().generateRequestBody();
         restRentFlatForLongRequestBody.setTownName("Минск");

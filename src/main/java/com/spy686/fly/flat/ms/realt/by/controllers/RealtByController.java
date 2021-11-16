@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.Executors;
 
 
@@ -22,6 +24,8 @@ public class RealtByController {
     private RealtByService realtByService;
     // TODO: 24.10.2021: p.sakharchuj: Need to apply with pool
     private static boolean controllerLocker = false;
+    private static final Queue<Runnable> tasksQueue = new LinkedList<>();
+
 
     @GetMapping(value = "/realt-by/fetch")
     public void fetchRealtBy() {
@@ -34,17 +38,20 @@ public class RealtByController {
     }
 
     private void run(String request, Runnable runnable) {
-        if (controllerLocker) {
-            log.info("Previous process doesn't completed.");
-            throw new OrderNotFoundException();
-        }
-        Executors.newSingleThreadExecutor().submit(() -> {
-            log.info("START: {}", request);
+        tasksQueue.add(runnable);
+        log.info("Added to Queue [{}]: {}", tasksQueue.size(), request);
+
+        if (!controllerLocker) {
             controllerLocker = true;
-            runnable.run();
-            controllerLocker = false;
-            log.info("END: {}", request);
-        });
+            Executors.newSingleThreadExecutor().submit(() -> {
+                while (tasksQueue.peek() != null) { // или !queue.isEmpty()
+                    log.info("In Queue: {}", tasksQueue.size());
+                    tasksQueue.poll().run();
+                }
+                log.info("Queue is empty");
+                controllerLocker = false;
+            });
+        }
     }
 
     @ResponseStatus(value = HttpStatus.LOCKED, reason = "Process Locked")

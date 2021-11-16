@@ -1,7 +1,6 @@
 package com.spy686.fly.flat.ms.realt.by.services.database;
 
 import com.spy686.fly.flat.ms.realt.by.models.RentFlat;
-import com.spy686.fly.flat.ms.realt.by.models.Source;
 import com.spy686.fly.flat.ms.realt.by.repository.RentFlatRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ public class DatabaseRentFlatService {
     }
 
     public List<RentFlat> getAll() {
-        log.info("Get All: " + Source.REALT_BY);
-        return rentFlatRepository.findAllBySource(Source.REALT_BY);
+        log.info("Get All: " + RentFlat.Source.REALT_BY);
+        return rentFlatRepository.findAllBySource(RentFlat.Source.REALT_BY);
     }
 }

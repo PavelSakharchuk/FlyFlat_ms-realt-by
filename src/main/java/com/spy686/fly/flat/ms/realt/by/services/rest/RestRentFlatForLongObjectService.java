@@ -24,7 +24,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RestRentFlatForLongObjectService extends RestBase {
 
-    private static final String CONTACTS_CSS_QUERY = "#object-contacts .object-contacts strong";
+    private static final String SELLER_TYPE_CSS_QUERY = ".inner-object-contacts .agent-block .media-body .fs-small";
+    private static final String SELLER_NAME_CSS_QUERY = ".inner-object-contacts .agent-block .media-body strong";
+    private static final String SELLER_PHONES_CSS_QUERY = "#object-contacts .object-contacts strong";
 
 
     public RestRentFlatForLongObjectService() {
@@ -76,9 +78,15 @@ public class RestRentFlatForLongObjectService extends RestBase {
     }
 
     private RentFlat fetchRentFlatData(Document htmlDoc, RentFlat rentFlat) {
-        Elements contacts = htmlDoc.select(CONTACTS_CSS_QUERY);
-        List<String> sellerPhones = contacts.stream().map(Element::text).collect(Collectors.toList());
+        Elements sellerTypeElement = htmlDoc.select(SELLER_TYPE_CSS_QUERY);
+        Elements sellerNameElement = htmlDoc.select(SELLER_NAME_CSS_QUERY);
+        Elements sellerPhonesElements = htmlDoc.select(SELLER_PHONES_CSS_QUERY);
 
+        String sellerType = sellerTypeElement.text();
+        String sellerName = sellerNameElement.text();
+        List<String> sellerPhones = sellerPhonesElements.stream().map(Element::text).collect(Collectors.toList());
+
+        rentFlat.setSellerName(String.format("%s: %s", sellerType, sellerName));
         rentFlat.setSellerPhones(sellerPhones);
         return rentFlat;
     }
