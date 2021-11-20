@@ -55,6 +55,7 @@ public class RealtByFetchService {
                         // Update data got by 'rent/flat-for-long/object/[id]/':
                         // RestRentFlatForLongObjectService#fetchRentFlatData
                         actualRentFlat.setSellerPhones(savedRentFlat.getSellerPhones());
+                        actualRentFlat.setSellerName(savedRentFlat.getSellerName());
 
                         int actualPriceUsd = actualRentFlat.getPriceUsd() == null ? 0 : actualRentFlat.getPriceUsd();
                         int savedPriceUsd = savedRentFlat.getPriceUsd() == null ? 0 : savedRentFlat.getPriceUsd();
