@@ -1,5 +1,6 @@
 package com.spy686.fly.flat.ms.realt.by.services.rest;
 
+import com.spy686.fly.flat.ms.realt.by.constants.Constants;
 import com.spy686.fly.flat.ms.realt.by.models.RentFlat;
 import com.spy686.fly.flat.ms.realt.by.rest.RestBase;
 import com.spy686.fly.flat.ms.realt.by.rest.requests.RestRentFlatForLongObjectRequestBody;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RestRentFlatForLongObjectService extends RestBase {
 
+    private static final String OBJECT_GALLERY_CSS_QUERY = "#object-gallery img";
     private static final String SELLER_TYPE_CSS_QUERY = ".inner-object-contacts .agent-block .media-body .fs-small";
     private static final String SELLER_NAME_CSS_QUERY = ".inner-object-contacts .agent-block .media-body strong";
     private static final String SELLER_PHONES_CSS_QUERY = "#object-contacts .object-contacts strong";
@@ -78,15 +80,18 @@ public class RestRentFlatForLongObjectService extends RestBase {
     }
 
     private RentFlat fetchRentFlatData(Document htmlDoc, RentFlat rentFlat) {
-        Elements sellerTypeElement = htmlDoc.select(SELLER_TYPE_CSS_QUERY);
-        Elements sellerNameElement = htmlDoc.select(SELLER_NAME_CSS_QUERY);
-        Elements sellerPhonesElements = htmlDoc.select(SELLER_PHONES_CSS_QUERY);
+        Elements imageLinkElements = htmlDoc.select(OBJECT_GALLERY_CSS_QUERY);
+        List<String> imageLinks = imageLinkElements.stream()
+                .map(element -> element.attr(Constants.Attributes.DATA_SRC))
+                .collect(Collectors.toList());
+        rentFlat.setImageLinks(imageLinks);
 
-        String sellerType = sellerTypeElement.text();
-        String sellerName = sellerNameElement.text();
-        List<String> sellerPhones = sellerPhonesElements.stream().map(Element::text).collect(Collectors.toList());
-
+        String sellerType = htmlDoc.select(SELLER_TYPE_CSS_QUERY).text();
+        String sellerName = htmlDoc.select(SELLER_NAME_CSS_QUERY).text();
         rentFlat.setSellerName(String.format("%s: %s", sellerType, sellerName));
+
+        Elements sellerPhonesElements = htmlDoc.select(SELLER_PHONES_CSS_QUERY);
+        List<String> sellerPhones = sellerPhonesElements.stream().map(Element::text).collect(Collectors.toList());
         rentFlat.setSellerPhones(sellerPhones);
         return rentFlat;
     }

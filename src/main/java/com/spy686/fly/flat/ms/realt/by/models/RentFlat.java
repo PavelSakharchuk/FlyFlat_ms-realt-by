@@ -26,7 +26,9 @@ public class RentFlat implements Serializable {
     private long objectId;
     private boolean highlighted;
     private String link;
-    private String imageLink;
+    // TODO: 24.11.2021: p.sakharchuk: Can be deleted
+    private String mainImageLink;
+    private List<String> imageLinks;
     private String price;
     private Integer priceUsd;
     private String updatedDate;
