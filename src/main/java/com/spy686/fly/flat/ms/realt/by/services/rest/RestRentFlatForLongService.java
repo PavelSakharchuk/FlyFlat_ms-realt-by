@@ -142,7 +142,7 @@ public class RestRentFlatForLongService extends RestBase {
                     String contentJson = itemLeftContentSection.attr(Constants.Attributes.CONTENT);
                     long id = Long.parseLong(JsonPath.from(contentJson).getString("code"));
                     String link = leftSection.selectFirst(ITEM_LEFT_LINK_CSS_QUERY).attr(Constants.Attributes.HREF);
-                    String mainImageLink = leftSection.selectFirst(ITEM_LEFT_IMAGE_LINK_CSS_QUERY).attr(Constants.Attributes.DATA_ORIGINAL);
+                    String imageLink = leftSection.selectFirst(ITEM_LEFT_IMAGE_LINK_CSS_QUERY).attr(Constants.Attributes.DATA_ORIGINAL);
                     Element priceSection = leftSection.selectFirst(ITEM_LEFT_PRICE_CSS_QUERY);
                     String price;
                     Integer priceUsd = null;
@@ -172,7 +172,7 @@ public class RestRentFlatForLongService extends RestBase {
                     rentFlat.setObjectId(id);
                     rentFlat.setHighlighted(highlighted);
                     rentFlat.setLink(link);
-                    rentFlat.setMainImageLink(mainImageLink);
+                    rentFlat.setImageLink(imageLink);
                     rentFlat.setPrice(price);
                     rentFlat.setPriceUsd(priceUsd);
                     rentFlat.setUpdatedDate(updatedDate);
