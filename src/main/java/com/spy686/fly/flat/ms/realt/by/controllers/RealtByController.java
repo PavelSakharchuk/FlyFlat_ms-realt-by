@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Executors;
@@ -24,6 +25,9 @@ public class RealtByController {
     private RealtByService realtByService;
     // TODO: 24.10.2021: p.sakharchuj: Need to apply with pool
     private static boolean controllerLocker = false;
+    private static LocalDateTime lastStartTaskDate = LocalDateTime.now();
+    private static final int pendingTimeoutMinutes = 15;
+
     private static final Queue<Runnable> tasksQueue = new LinkedList<>();
 
 
@@ -41,11 +45,17 @@ public class RealtByController {
         tasksQueue.add(runnable);
         log.info("Added to Queue [{}]: {}", tasksQueue.size(), request);
 
+        if (LocalDateTime.now().isAfter(lastStartTaskDate.plusMinutes(pendingTimeoutMinutes))) {
+            log.info("Last task is pending.");
+            controllerLocker = false;
+        }
+
         if (!controllerLocker) {
             controllerLocker = true;
             Executors.newSingleThreadExecutor().submit(() -> {
-                while (tasksQueue.peek() != null) { // или !queue.isEmpty()
+                while (tasksQueue.peek() != null) {
                     log.info("In Queue: {}", tasksQueue.size());
+                    lastStartTaskDate = LocalDateTime.now();
                     tasksQueue.poll().run();
                 }
                 log.info("Queue is empty");
