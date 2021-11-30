@@ -56,6 +56,7 @@ public class RealtByController {
                 while (tasksQueue.peek() != null) {
                     log.info("In Queue: {}", tasksQueue.size());
                     lastStartTaskDate = LocalDateTime.now();
+                    System.gc();
                     tasksQueue.poll().run();
                 }
                 log.info("Queue is empty");
