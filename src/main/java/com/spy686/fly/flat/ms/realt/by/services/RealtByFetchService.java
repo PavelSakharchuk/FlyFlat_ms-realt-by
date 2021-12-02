@@ -28,11 +28,11 @@ public class RealtByFetchService {
     private DatabaseRentFlatService databaseRentFlatService;
 
     public void fetch() throws IOException {
-        List<RentFlat> savedRentFlatList = databaseRentFlatService.getAll();
-        Map<Long, RentFlat> savedRentFlatMap = savedRentFlatList.stream()
+        final List<RentFlat> savedRentFlatList = databaseRentFlatService.getAll();
+        final Map<Long, RentFlat> savedRentFlatMap = savedRentFlatList.stream()
                 .distinct()
                 .collect(Collectors.toMap(RentFlat::getObjectId, Function.identity()));
-        List<RentFlat> actualRentFlatList = restRentFlatForLongService.getRentFlatList();
+        final List<RentFlat> actualRentFlatList = restRentFlatForLongService.getRentFlatList();
 
         // Update actualRentFlatList:
         // actual.PriceUsd = saved.PriceUsd: actual.CreateDate=saved.CreateDate; actual.LastUpdate=saved.LastUpdate
@@ -44,7 +44,7 @@ public class RealtByFetchService {
         AtomicInteger withoutUpdatedPriceRentFlatsCount = new AtomicInteger(0);
         actualRentFlatList.parallelStream()
                 .forEach(actualRentFlat -> {
-                    RentFlat savedRentFlat = Optional.ofNullable(savedRentFlatMap.get(actualRentFlat.getObjectId())).orElse(null);
+                    final RentFlat savedRentFlat = Optional.ofNullable(savedRentFlatMap.get(actualRentFlat.getObjectId())).orElse(null);
                     if (null == savedRentFlat) {
                         restRentFlatForLongObjectService.fetchRentFlatData(actualRentFlat);
                         notSavedRentFlatsCount.getAndIncrement();
@@ -54,11 +54,14 @@ public class RealtByFetchService {
 
                         // Update data got by 'rent/flat-for-long/object/[id]/':
                         // RestRentFlatForLongObjectService#fetchRentFlatData
+                        if (savedRentFlat.getImageLink() != null) {
+                            actualRentFlat.setImageLink(savedRentFlat.getImageLink());
+                        }
                         actualRentFlat.setSellerPhones(savedRentFlat.getSellerPhones());
                         actualRentFlat.setSellerName(savedRentFlat.getSellerName());
 
-                        int actualPriceUsd = actualRentFlat.getPriceUsd() == null ? 0 : actualRentFlat.getPriceUsd();
-                        int savedPriceUsd = savedRentFlat.getPriceUsd() == null ? 0 : savedRentFlat.getPriceUsd();
+                        final int actualPriceUsd = actualRentFlat.getPriceUsd() == null ? 0 : actualRentFlat.getPriceUsd();
+                        final int savedPriceUsd = savedRentFlat.getPriceUsd() == null ? 0 : savedRentFlat.getPriceUsd();
 
                         if (actualPriceUsd == savedPriceUsd) {
                             actualRentFlat.setLastUpdate(savedRentFlat.getLastUpdate());

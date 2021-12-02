@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -verbose:gc -Xmx256m -Xms256m -Xss256k -XX:+UseCompressedOops -XX:+UnlockDiagnosticVMOptions -XX:+UnlockExperimentalVMOptions -XX:+PrintFlagsFinal -jar build/libs/*.jar

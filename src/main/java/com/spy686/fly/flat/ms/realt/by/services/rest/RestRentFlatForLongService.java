@@ -73,13 +73,13 @@ public class RestRentFlatForLongService extends RestBase {
     public List<RentFlat> getRentFlatList() throws IOException {
         log.info("Get Rent Flat List: " + RentFlat.Source.REALT_BY);
 
-        RestRentFlatForLongRequestBody restRentFlatForLongRequestBody = new RestRentFlatForLongRequestBody().generateRequestBody();
+        final RestRentFlatForLongRequestBody restRentFlatForLongRequestBody = new RestRentFlatForLongRequestBody().generateRequestBody();
         restRentFlatForLongRequestBody.setTownName("Минск");
         restRentFlatForLongRequestBody.setDaysOld(1);
         restRentFlatForLongRequestBody.setSortBy("date_revision");
         restRentFlatForLongRequestBody.setAscDesc("1");
 
-        RestRentFlatForLongRedirectRequestBody restRentFlatForLongRedirectRequestBody =
+        final RestRentFlatForLongRedirectRequestBody restRentFlatForLongRedirectRequestBody =
                 getRealtByRentFlatRequestRedirect(restRentFlatForLongRequestBody);
 
         return getRentFlatList(restRentFlatForLongRedirectRequestBody);
@@ -88,13 +88,13 @@ public class RestRentFlatForLongService extends RestBase {
     private RestRentFlatForLongRedirectRequestBody getRealtByRentFlatRequestRedirect(
             RestRentFlatForLongRequestBody restRentFlatForLongRequestBody) throws IOException {
         log.info("Get Request after redirect.");
-        Response firstResponseWithRedirect = get(restRentFlatForLongRequestBody, Endpoint.RENT_FLAT_FOR_LONG, false);
-        String firstUrlWithRedirect = firstResponseWithRedirect.getHeader("Location");
-        Response responseWithLocation = get(restRentFlatForLongRequestBody, new URL(firstUrlWithRedirect), false);
-        String urlString = responseWithLocation.getHeader("Location");
-        String searchParam = UriComponentsBuilder.fromUriString(urlString).build().getQueryParams().getFirst("search");
+        final Response firstResponseWithRedirect = get(restRentFlatForLongRequestBody, Endpoint.RENT_FLAT_FOR_LONG, false);
+        final String firstUrlWithRedirect = firstResponseWithRedirect.getHeader("Location");
+        final Response responseWithLocation = get(restRentFlatForLongRequestBody, new URL(firstUrlWithRedirect), false);
+        final String urlString = responseWithLocation.getHeader("Location");
+        final String searchParam = UriComponentsBuilder.fromUriString(urlString).build().getQueryParams().getFirst("search");
 
-        RestRentFlatForLongRedirectRequestBody restRentFlatForLongRedirectRequestBody =
+        final RestRentFlatForLongRedirectRequestBody restRentFlatForLongRedirectRequestBody =
                 new RestRentFlatForLongRedirectRequestBody().generateRequestBody();
         restRentFlatForLongRedirectRequestBody.setSearch(URLDecoder.decode(searchParam, "UTF-8"));
 
@@ -103,15 +103,15 @@ public class RestRentFlatForLongService extends RestBase {
 
     private List<RentFlat> getRentFlatList(RestRentFlatForLongRedirectRequestBody realtByFlatForLongRequestBody) {
         log.info("Get Rent Flats.");
-        Map<Integer, Document> htmlDocMap = new HashMap<>();
+        final Map<Integer, Document> htmlDocMap = new HashMap<>();
 
         int currentPage = realtByFlatForLongRequestBody.getPage();
         Document currentHtmlDoc;
         do {
             realtByFlatForLongRequestBody.setPage(currentPage++);
-            Response response = get(realtByFlatForLongRequestBody, Endpoint.RENT_FLAT_FOR_LONG);
+            final Response response = get(realtByFlatForLongRequestBody, Endpoint.RENT_FLAT_FOR_LONG);
 
-            String body = response.asString();
+            final String body = response.asString();
             currentHtmlDoc = Jsoup.parse(body);
 
             htmlDocMap.put(currentPage, currentHtmlDoc);
@@ -125,7 +125,7 @@ public class RestRentFlatForLongService extends RestBase {
 
     private List<RentFlat> getRentFlatList(Integer page, Document htmlDoc) {
         List<RentFlat> rentFlatList = new ArrayList<>();
-        Elements items = htmlDoc.select(ITEMS_CSS_QUERY);
+        final Elements items = htmlDoc.select(ITEMS_CSS_QUERY);
 
         AtomicInteger i = new AtomicInteger(1);
         int itemsSize = items.size();
@@ -133,42 +133,42 @@ public class RestRentFlatForLongService extends RestBase {
                 .forEach(htmlNode -> {
                     log.info("In progress: page {} - {}/{}", page, i.getAndIncrement(), itemsSize);
 
-                    Element leftSection = htmlNode.selectFirst(ITEM_LEFT_SECTION_CSS_QUERY);
-                    Element rightSection = htmlNode.selectFirst(ITEM_RIGHT_SECTION_CSS_QUERY);
+                    final Element leftSection = htmlNode.selectFirst(ITEM_LEFT_SECTION_CSS_QUERY);
+                    final Element rightSection = htmlNode.selectFirst(ITEM_RIGHT_SECTION_CSS_QUERY);
 
                     boolean highlighted = htmlNode.selectFirst(ITEM_HIGHLIGHTED_CSS_QUERY) != null;
 
-                    Element itemLeftContentSection = leftSection.selectFirst(ITEM_LEFT_CONTENT_SECTION_CSS_QUERY);
-                    String contentJson = itemLeftContentSection.attr(Constants.Attributes.CONTENT);
-                    long id = Long.parseLong(JsonPath.from(contentJson).getString("code"));
-                    String link = leftSection.selectFirst(ITEM_LEFT_LINK_CSS_QUERY).attr(Constants.Attributes.HREF);
-                    String imageLink = leftSection.selectFirst(ITEM_LEFT_IMAGE_LINK_CSS_QUERY).attr(Constants.Attributes.DATA_ORIGINAL);
-                    Element priceSection = leftSection.selectFirst(ITEM_LEFT_PRICE_CSS_QUERY);
+                    final Element itemLeftContentSection = leftSection.selectFirst(ITEM_LEFT_CONTENT_SECTION_CSS_QUERY);
+                    final String contentJson = itemLeftContentSection.attr(Constants.Attributes.CONTENT);
+                    final long id = Long.parseLong(JsonPath.from(contentJson).getString("code"));
+                    final String link = leftSection.selectFirst(ITEM_LEFT_LINK_CSS_QUERY).attr(Constants.Attributes.HREF);
+                    final String imageLink = leftSection.selectFirst(ITEM_LEFT_IMAGE_LINK_CSS_QUERY).attr(Constants.Attributes.DATA_ORIGINAL);
+                    final Element priceSection = leftSection.selectFirst(ITEM_LEFT_PRICE_CSS_QUERY);
                     String price;
                     Integer priceUsd = null;
                     if (priceSection != null) {
                         price = priceSection.attr(Constants.Attributes.DATA_CONTENT);
-                        String usdString = priceSection.attr(Constants.Attributes.DATA_840);
+                        final String usdString = priceSection.attr(Constants.Attributes.DATA_840);
                         priceUsd = Integer.parseInt(usdString.replaceAll("\\D", ""));
                     } else {
                         price = leftSection.selectFirst(ITEM_LEFT_PRICE_NEGOTIABLE_CSS_QUERY).text();
                     }
 
-                    String updatedDate = rightSection.selectFirst(ITEM_RIGHT_UPDATED_DATE_CSS_QUERY).text();
-                    String title = rightSection.selectFirst(ITEM_RIGHT_TITLE_CSS_QUERY).text();
-                    String location = rightSection.selectFirst(ITEM_RIGHT_LOCATION_CSS_QUERY).text();
-                    String flatParams = rightSection.selectFirst(ITEM_RIGHT_FLAT_PARAMS_CSS_QUERY).text();
-                    String originalRoomCountString = rightSection.selectFirst(ITEM_RIGHT_ROOMS_CSS_QUERY).text();
-                    Integer rooms = RentFlat.RoomCount.valueByRoomCountString(originalRoomCountString).getRoomCount();
-                    String details = rightSection.selectFirst(ITEM_RIGHT_DETAILS_CSS_QUERY).text();
+                    final String updatedDate = rightSection.selectFirst(ITEM_RIGHT_UPDATED_DATE_CSS_QUERY).text();
+                    final String title = rightSection.selectFirst(ITEM_RIGHT_TITLE_CSS_QUERY).text();
+                    final String location = rightSection.selectFirst(ITEM_RIGHT_LOCATION_CSS_QUERY).text();
+                    final String flatParams = rightSection.selectFirst(ITEM_RIGHT_FLAT_PARAMS_CSS_QUERY).text();
+                    final String originalRoomCountString = rightSection.selectFirst(ITEM_RIGHT_ROOMS_CSS_QUERY).text();
+                    final Integer rooms = RentFlat.RoomCount.valueByRoomCountString(originalRoomCountString).getRoomCount();
+                    final String details = rightSection.selectFirst(ITEM_RIGHT_DETAILS_CSS_QUERY).text();
 
-                    Element contactSection = rightSection.selectFirst(ITEM_CONTACT_SECTION_CSS_QUERY);
-                    Element logoLinkSection = contactSection.selectFirst(ITEM_CONTACT_LOGO_CSS_QUERY);
-                    String logoLink = logoLinkSection == null ? null : logoLinkSection.attr(Constants.Attributes.SRC);
-                    String sellerName = contactSection.selectFirst(ITEM_CONTACT_SELLER_NAME_CSS_QUERY).text();
-                    String sellerPhone = contactSection.selectFirst(ITEM_CONTACT_SELLER_PHONE_CSS_QUERY).text();
+                    final Element contactSection = rightSection.selectFirst(ITEM_CONTACT_SECTION_CSS_QUERY);
+                    final Element logoLinkSection = contactSection.selectFirst(ITEM_CONTACT_LOGO_CSS_QUERY);
+                    final String logoLink = logoLinkSection == null ? null : logoLinkSection.attr(Constants.Attributes.SRC);
+                    final String sellerName = contactSection.selectFirst(ITEM_CONTACT_SELLER_NAME_CSS_QUERY).text();
+                    final String sellerPhone = contactSection.selectFirst(ITEM_CONTACT_SELLER_PHONE_CSS_QUERY).text();
 
-                    RentFlat rentFlat = new RentFlat();
+                    final RentFlat rentFlat = new RentFlat();
                     rentFlat.setObjectId(id);
                     rentFlat.setHighlighted(highlighted);
                     rentFlat.setLink(link);
@@ -192,7 +192,7 @@ public class RestRentFlatForLongService extends RestBase {
     }
 
     private boolean isLastPage(Document htmlDoc) {
-        Element lastPageSection = htmlDoc.select(PAGING_LIST_CSS_QUERY).last();
+        final Element lastPageSection = htmlDoc.select(PAGING_LIST_CSS_QUERY).last();
         return lastPageSection == null || lastPageSection.hasClass("active");
     }
 }
