@@ -84,16 +84,21 @@ public class RestRentFlatForLongObjectService extends RestBase {
         String mainImageLink = mainImageLinkElement.attr(Constants.Attributes.SRC);
 
         Elements sellerTypeElement = htmlDoc.select(SELLER_TYPE_CSS_QUERY);
-        String sellerType = sellerTypeElement.text();
+        String sellerType = sellerTypeElement.text().trim();
 
         Elements sellerNameElement = htmlDoc.select(SELLER_NAME_CSS_QUERY);
-        String sellerName = sellerNameElement.text();
+        String sellerName = sellerNameElement.text().trim();
+
+        String seller = String.format("%s%s%s",
+                sellerType,
+                (sellerType.isEmpty() || sellerName.isEmpty()) ? "" : ": ",
+                sellerName);
 
         Elements sellerPhonesElements = htmlDoc.select(SELLER_PHONES_CSS_QUERY);
         List<String> sellerPhones = sellerPhonesElements.stream().map(Element::text).collect(Collectors.toList());
 
         rentFlat.setImageLink(mainImageLink.isEmpty() ? null : mainImageLink);
-        rentFlat.setSellerName(String.format("%s: %s", sellerType, sellerName));
+        rentFlat.setSellerName(seller);
         rentFlat.setSellerPhones(sellerPhones);
         return rentFlat;
     }
