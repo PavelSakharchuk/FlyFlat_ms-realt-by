@@ -142,7 +142,12 @@ public class RestRentFlatForLongService extends RestBase {
                     final String contentJson = itemLeftContentSection.attr(Constants.Attributes.CONTENT);
                     final long id = Long.parseLong(JsonPath.from(contentJson).getString("code"));
                     final String link = leftSection.selectFirst(ITEM_LEFT_LINK_CSS_QUERY).attr(Constants.Attributes.HREF);
-                    final String imageLink = leftSection.selectFirst(ITEM_LEFT_IMAGE_LINK_CSS_QUERY).attr(Constants.Attributes.DATA_ORIGINAL);
+
+                    String imageLink = leftSection.selectFirst(ITEM_LEFT_IMAGE_LINK_CSS_QUERY).attr(Constants.Attributes.DATA_ORIGINAL);
+                    if (imageLink.startsWith("typo3temp")) {
+                        imageLink = null;
+                    }
+
                     final Element priceSection = leftSection.selectFirst(ITEM_LEFT_PRICE_CSS_QUERY);
                     String price;
                     Integer priceUsd = null;
