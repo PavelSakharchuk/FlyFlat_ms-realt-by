@@ -13,8 +13,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -30,7 +33,7 @@ public class RealtByFetchService {
     public void fetch() throws IOException {
         final List<RentFlat> savedRentFlatList = databaseRentFlatService.getAll();
         final Map<Long, RentFlat> savedRentFlatMap = savedRentFlatList.stream()
-                .distinct()
+                .filter(distinctByObjectId(RentFlat::getObjectId))
                 .collect(Collectors.toMap(RentFlat::getObjectId, Function.identity()));
         final List<RentFlat> actualRentFlatList = restRentFlatForLongService.getRentFlatList();
 
@@ -77,5 +80,10 @@ public class RealtByFetchService {
         log.info("Get: {} [{} - new; {} - updated price; {} - without updated price]",
                 actualRentFlatList.size(), notSavedRentFlatsCount, updatedPriceRentFlatsCount, withoutUpdatedPriceRentFlatsCount);
         databaseRentFlatService.saveAll(actualRentFlatList);
+    }
+
+    public static <T> Predicate<T> distinctByObjectId(Function<? super T, ?> objectIdExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(objectIdExtractor.apply(t));
     }
 }

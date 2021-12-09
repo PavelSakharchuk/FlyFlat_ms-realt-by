@@ -82,6 +82,9 @@ public class RestRentFlatForLongObjectService extends RestBase {
     private RentFlat fetchRentFlatData(Document htmlDoc, RentFlat rentFlat) {
         Elements mainImageLinkElement = htmlDoc.select(MAIN_IMAGE_LINK_CSS_QUERY);
         String mainImageLink = mainImageLinkElement.attr(Constants.Attributes.SRC);
+        if (mainImageLink.startsWith("typo3temp") || mainImageLink.isEmpty()) {
+            mainImageLink = null;
+        }
 
         Elements sellerTypeElement = htmlDoc.select(SELLER_TYPE_CSS_QUERY);
         String sellerType = sellerTypeElement.text().trim();
@@ -97,7 +100,7 @@ public class RestRentFlatForLongObjectService extends RestBase {
         Elements sellerPhonesElements = htmlDoc.select(SELLER_PHONES_CSS_QUERY);
         List<String> sellerPhones = sellerPhonesElements.stream().map(Element::text).collect(Collectors.toList());
 
-        rentFlat.setImageLink(mainImageLink.isEmpty() ? null : mainImageLink);
+        rentFlat.setImageLink(mainImageLink);
         rentFlat.setSellerName(seller);
         rentFlat.setSellerPhones(sellerPhones);
         return rentFlat;
