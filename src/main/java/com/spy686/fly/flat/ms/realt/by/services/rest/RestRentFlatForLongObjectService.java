@@ -82,9 +82,9 @@ public class RestRentFlatForLongObjectService extends RestBase {
     private RentFlat fetchRentFlatData(Document htmlDoc, RentFlat rentFlat) {
         Elements mainImageLinkElement = htmlDoc.select(MAIN_IMAGE_LINK_CSS_QUERY);
         String mainImageLink = mainImageLinkElement.attr(Constants.Attributes.SRC);
-        if (mainImageLink.startsWith("typo3temp") || mainImageLink.isEmpty()) {
-            mainImageLink = null;
-        }
+        mainImageLink = mainImageLink.startsWith("typo3temp") ? null : mainImageLink;
+        mainImageLink = mainImageLink.equals("https://realt.by/") ? null : mainImageLink;
+        mainImageLink = mainImageLink.isEmpty() ? null : mainImageLink;
 
         Elements sellerTypeElement = htmlDoc.select(SELLER_TYPE_CSS_QUERY);
         String sellerType = sellerTypeElement.text().trim();

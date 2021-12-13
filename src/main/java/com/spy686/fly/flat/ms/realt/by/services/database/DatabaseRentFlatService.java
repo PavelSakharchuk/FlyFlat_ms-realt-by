@@ -18,7 +18,7 @@ public class DatabaseRentFlatService {
 
 
     public void deleteAll(List<RentFlat> rentFlats) {
-        log.info("Delete: " + rentFlats.size());
+        log.info("Delete {}: {}", rentFlats.size(), rentFlats);
         rentFlatRepository.deleteAll(rentFlats);
     }
 
