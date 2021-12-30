@@ -32,7 +32,8 @@ public class RealtByDeleteNotActualService {
                 });
 
         List<RentFlat> notActualRentFlatList = savedRentFlatList.parallelStream()
-                .filter(rentFlat -> !rentFlat.isActual()).collect(Collectors.toList());
+                .filter(rentFlat -> !rentFlat.isActual())
+                .collect(Collectors.toList());
 
         databaseRentFlatService.deleteAll(notActualRentFlatList);
     }

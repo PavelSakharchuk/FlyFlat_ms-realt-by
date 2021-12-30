@@ -48,6 +48,7 @@ public class RestRentFlatForLongObjectService extends RestBase {
     private RentFlat fetchRentFlatIsActual(RestRentFlatForLongObjectRequestBody restRentFlatForLongObjectRequestBody,
                                            RentFlat rentFlat) {
         Response response = get(restRentFlatForLongObjectRequestBody, rentFlat.getLink());
+        log.info("'{}' for: {}", response.getStatusLine(), rentFlat.getLink());
 
         switch (HttpStatus.valueOf(response.getStatusCode())) {
             case NOT_FOUND:
