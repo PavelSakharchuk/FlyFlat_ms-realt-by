@@ -70,12 +70,12 @@ public class RestRentFlatForLongService extends RestBase {
         super();
     }
 
-    public List<RentFlat> getRentFlatList() throws IOException {
+    public List<RentFlat> getRentFlatList(int daysAgo) throws IOException {
         log.info("Get Rent Flat List: " + RentFlat.Source.REALT_BY);
 
         final RestRentFlatForLongRequestBody restRentFlatForLongRequestBody = new RestRentFlatForLongRequestBody().generateRequestBody();
         restRentFlatForLongRequestBody.setTownName("Минск");
-        restRentFlatForLongRequestBody.setDaysOld(1);
+        restRentFlatForLongRequestBody.setDaysOld(daysAgo);
         restRentFlatForLongRequestBody.setSortBy("date_revision");
         restRentFlatForLongRequestBody.setAscDesc("1");
 
@@ -157,6 +157,9 @@ public class RestRentFlatForLongService extends RestBase {
                         priceUsd = Integer.parseInt(usdString.replaceAll("\\D", ""));
                     } else {
                         price = leftSection.selectFirst(ITEM_LEFT_PRICE_NEGOTIABLE_CSS_QUERY).text();
+                        if (price != null) {
+                            priceUsd = 0;
+                        }
                     }
 
                     final String updatedDate = rightSection.selectFirst(ITEM_RIGHT_UPDATED_DATE_CSS_QUERY).text();
