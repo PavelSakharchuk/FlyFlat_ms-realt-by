@@ -29,13 +29,14 @@ public class RealtByFetchService {
     private RestRentFlatForLongService restRentFlatForLongService;
     private RestRentFlatForLongObjectService restRentFlatForLongObjectService;
     private DatabaseRentFlatService databaseRentFlatService;
+    private final int DAYS_AGO = 1;
 
     public void fetch() throws IOException {
         final List<RentFlat> savedRentFlatList = databaseRentFlatService.getAll();
         final Map<Long, RentFlat> savedRentFlatMap = savedRentFlatList.stream()
                 .filter(distinctByObjectId(RentFlat::getObjectId))
                 .collect(Collectors.toMap(RentFlat::getObjectId, Function.identity()));
-        final List<RentFlat> actualRentFlatList = restRentFlatForLongService.getRentFlatList();
+        final List<RentFlat> actualRentFlatList = restRentFlatForLongService.getRentFlatList(DAYS_AGO);
 
         // Update actualRentFlatList:
         // actual.PriceUsd = saved.PriceUsd: actual.CreateDate=saved.CreateDate; actual.LastUpdate=saved.LastUpdate
