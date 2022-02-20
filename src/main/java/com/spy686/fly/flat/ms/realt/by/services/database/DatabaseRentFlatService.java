@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -18,17 +19,25 @@ public class DatabaseRentFlatService {
 
 
     public void deleteAll(List<RentFlat> rentFlats) {
-        log.info("Delete: " + rentFlats.size());
+        List<Long> rentFlatObjectIds = rentFlats.stream()
+                .map(RentFlat::getObjectId)
+                .collect(Collectors.toList());
+
+        log.info("Delete {}: {}", rentFlats.size(), rentFlatObjectIds);
         rentFlatRepository.deleteAll(rentFlats);
+        log.info("Deleted {}: {}", rentFlats.size(), rentFlatObjectIds);
     }
 
     public void saveAll(List<RentFlat> rentFlats) {
         log.info("Save: " + rentFlats.size());
         rentFlatRepository.saveAll(rentFlats);
+        log.info("Saved: " + rentFlats.size());
     }
 
     public List<RentFlat> getAll() {
         log.info("Get All: " + RentFlat.Source.REALT_BY);
-        return rentFlatRepository.findAllBySource(RentFlat.Source.REALT_BY);
+        List<RentFlat> rentFlats = rentFlatRepository.findAllBySource(RentFlat.Source.REALT_BY);
+        log.info("Got All: " + RentFlat.Source.REALT_BY);
+        return rentFlats;
     }
 }
